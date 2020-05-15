@@ -1,0 +1,31 @@
+{
+  "name": "imagebot",
+  "version": "1.0.0",
+  "description": "",
+  "main": "index.js",
+  "scripts": {
+    "compile": "tsc -p ./",
+    "start": "npm run compile && node out/src/index.js",
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/maksganzol/imagebot.git"
+  },
+  "author": "",
+  "license": "GANZOL",
+  "bugs": {
+    "url": "https://github.com/maksganzol/imagebot/issues"
+  },
+  "homepage": "https://github.com/maksganzol/imagebot#readme",
+  "dependencies": {
+    "node-fetch": "^2.6.0",
+    "node-telegram-bot-api": "^0.50.0",
+    "rimraf": "^3.0.2"
+  },
+  "devDependencies": {
+    "@types/node-fetch": "^2.5.7",
+    "@types/node-telegram-bot-api": "^0.40.3",
+    "@types/rimraf": "^3.0.0"
+  }
+}
