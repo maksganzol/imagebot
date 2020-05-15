@@ -6,7 +6,7 @@
   "scripts": {
     "compile": "tsc -p ./",
     "start-local": "npm run compile && npm start",
-    "start": "node out/src/index.js", 
+    "start": "npm i && node out/src/index.js", 
     "test": "echo \"Error: no test specified\" && exit 1"
   },
   "repository": {
