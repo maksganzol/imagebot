@@ -12,13 +12,15 @@ const fileList = async (path: string): Promise<string[]> => new Promise((res, re
 
 const bot = new TelegramBot(token, {polling: true})
 
-bot.onText(/\/name (.+)/, (msg: TelegramBot.Message, match: RegExpExecArray |null) => {
+bot.onText(/(test)/, (msg: TelegramBot.Message, match: RegExpExecArray |null) => {
     if(msg.from) {
         const id = msg.from.id;
         const name = match ? match[1] : 'noname'
-        bot.sendMessage(id, 'Hello, ' + name);
+        bot.sendMessage(id, name);
     }
 })
+
+
 
 const actualFiles: string[] = []
 
