@@ -14,8 +14,9 @@ bot.onText(/\/(test)/, (msg, match) => {
 });
 bot.onText(/\/start\s*(?:-t\s+(\d+))?/, async (msg, match) => {
     if (msg.from) {
-        state.files.push(...(await images_1.getImages()));
         const id = msg.from.id;
+        await bot.sendMessage(id, 'Posting started.');
+        state.files.push(...(await images_1.getImages()));
         const timeout = match ? Number(match[1]) : 15 * 1000 * 60;
         await bot.sendMessage(id, `${state.files.length} is available. Post timeout set to ${timeout} mls`);
         state.setIntervalId = setInterval(async () => {
@@ -31,6 +32,10 @@ bot.onText(/\/start\s*(?:-t\s+(\d+))?/, async (msg, match) => {
     }
 });
 bot.onText(/\/stop/, async (msg, match) => {
+    console.log('Bot stopped');
     clearInterval(state.setIntervalId || 0);
+    if (msg.from) {
+        await bot.sendMessage(msg.from.id, 'Bot stopped.');
+    }
 });
 //# sourceMappingURL=index.js.map

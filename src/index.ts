@@ -34,7 +34,11 @@ bot.onText(/\/start\s*(?:-t\s+(\d+))?/, async (msg: TelegramBot.Message, match: 
 });
 
 bot.onText(/\/stop/, async (msg: TelegramBot.Message, match: RegExpExecArray |null) => {
+    console.log('Bot stopped')
     clearInterval(state.setIntervalId || 0)
+    if(msg.from) {
+        await bot.sendMessage(msg.from.id, 'Bot stopped.')
+    }
 });
 
 
