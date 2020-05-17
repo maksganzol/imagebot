@@ -1,18 +1,12 @@
 import * as TelegramBot from 'node-telegram-bot-api'
 import { token, channelId } from './config';
-import { readFileSync, readdir} from 'fs';
-import { updateImages } from './images/images';
+import { getImages } from './images/images';
 
-const fileList = async (path: string): Promise<string[]> => new Promise((res, rej) => {
-    readdir(path, (err, files) => {
-        if(err) rej(err)
-        res(files)
-    })
-})
+const state: { setIntervalId: any, files: Buffer[]} = { setIntervalId: 0, files: []}
 
 const bot = new TelegramBot(token, {polling: true})
 
-bot.onText(/(test)/, (msg: TelegramBot.Message, match: RegExpExecArray |null) => {
+bot.onText(/\/(test)/, (msg: TelegramBot.Message, match: RegExpExecArray |null) => {
     if(msg.from) {
         const id = msg.from.id;
         const name = match ? match[1] : 'noname'
@@ -20,26 +14,29 @@ bot.onText(/(test)/, (msg: TelegramBot.Message, match: RegExpExecArray |null) =>
     }
 })
 
+bot.onText(/\/start\s*(?:-t\s+(\d+))?/, async (msg: TelegramBot.Message, match: RegExpExecArray |null) => {
+    if(msg.from) {
+        const id = msg.from.id;
+        await bot.sendMessage(id, 'Posting started.')
+        state.files.push(...(await getImages()))
+        const timeout = match ? Number(match[1]) : 15 * 1000 * 60
+        await bot.sendMessage(id, `${state.files.length} is available. Post timeout set to ${timeout} mls`);
+        state.setIntervalId = setInterval(async () => {
+            const file = state.files.reverse()[0];
+            if(file){
+                await bot.sendPhoto(channelId, file)
+                state.files.pop()
+                return;
+            } 
+            if(state.files.length <= 0) state.files.push(...(await getImages()))
+        }, timeout)
+    }
+});
+
+bot.onText(/\/stop/, async (msg: TelegramBot.Message, match: RegExpExecArray |null) => {
+    clearInterval(state.setIntervalId || 0)
+});
 
 
-const actualFiles: string[] = []
-
-updateImages()
-    .then(() => fileList('./res'))
-    .then(files => {
-        files.map(file => actualFiles.push(file))
-        setInterval(async () => {
-            const revFiles = actualFiles.reverse()
-            console.log(revFiles[0])
-            if(revFiles[0]){
-                await bot.sendPhoto(channelId, readFileSync(`./res/${revFiles[0]}`))
-                actualFiles.pop();
-            } else {
-                await updateImages();
-            }
-        }, 15 * 60 * 1000)    
-    })
-
-    
 
 

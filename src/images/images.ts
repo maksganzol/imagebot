@@ -1,24 +1,18 @@
-import { writeFileSync, mkdirSync } from 'fs'
 import { getImageBuffer, getThreadImgsUrl } from './imageFetcher';
 import { getThreads } from './threadParser';
-import { sync } from 'rimraf'
 import { patterns } from './regexPatterns';
 
-const ZSMPattern = patterns['ZSM']
+const TopicPattern = patterns['ZSM']
 const urlPattern = /.+\.jpg$/
-sync('./res')
-mkdirSync('./res')
-export const updateImages = async (): Promise<void> => {
-    const threads = (await getThreads())
-        .filter(({comment}) => ZSMPattern.test(comment))
-    for(let i = 0; i < threads.length; i++) {
-        console.log(`Thread ${threads[i].num} is being processed`)
-        const urls = (await getThreadImgsUrl(threads[i].num)).filter(url => urlPattern.test(url))
-        for(let j = 0; j < urls.length; j++) {
-            if(j > 50 ) break;
-            const img = await getImageBuffer(urls[j])
-            writeFileSync(`./res/${threads[i].num}-${urls[j].split('/').reverse()[0]}`, img)
-        }
-    }
-    console.log('Downloading completed')
-}
+
+export const getImages = async (): Promise<Buffer[]> => Promise.all(
+    (await getThreads())
+        .filter(({comment}) => TopicPattern.test(comment))
+        .map(({num}) => num)
+        .map(getThreadImgsUrl))
+        .then((urls: string[][]) => 
+            Promise.all(urls.flat()
+                .filter((url: string) => urlPattern.test(url))
+                .slice(undefined, 50)
+                .map(getImageBuffer))
+);

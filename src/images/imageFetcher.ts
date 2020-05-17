@@ -8,9 +8,7 @@ new Promise((res, rej) => {
     const url = `https://2ch.pm${imgPath}`;
     fetch(url, props)
     .then((res: Response) => res.buffer())
-    .then((buff: Buffer) => {
-        res(buff);
-    })
+    .then((buff: Buffer) => res(buff))
 });
 export const getThreadImgsUrl = (threadNum: string): Promise<string[]> => 
 fetch(`https://2ch.pm/b/res/${threadNum}.json`, props)

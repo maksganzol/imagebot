@@ -1,1 +1,2 @@
-export declare const updateImages: () => Promise<void>;
+/// <reference types="node" />
+export declare const getImages: () => Promise<Buffer[]>;
