@@ -20,7 +20,7 @@
   },
   "homepage": "https://github.com/maksganzol/imagebot#readme",
   "dependencies": {
-    "node-fetch": "^2.6.0",
+    "node-fetch": "^3.1.1",
     "node-telegram-bot-api": "^0.50.0",
     "rimraf": "^3.0.2"
   },
